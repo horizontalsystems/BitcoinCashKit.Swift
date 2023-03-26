@@ -31,12 +31,12 @@ public class CashBech32AddressConverter: IAddressConverter {
                 throw BitcoinCoreErrors.AddressConversion.invalidAddressLength
             }
             let type: AddressType = AddressType(rawValue: typeBits) ?? .pubKeyHash
-            return CashAddress(type: type, keyHash: hex, cashAddrBech32: correctedAddress, version: versionByte)
+            return CashAddress(type: type, payload: hex, cashAddrBech32: correctedAddress, version: versionByte)
         }
         throw BitcoinCoreErrors.AddressConversion.unknownAddressType
     }
 
-    public func convert(keyHash: Data, type: ScriptType) throws -> Address {
+    public func convert(lockingScriptPayload: Data, type: ScriptType) throws -> Address {
         let addressType: AddressType
         switch type {
             case .p2pkh, .p2pk:
@@ -47,19 +47,19 @@ public class CashBech32AddressConverter: IAddressConverter {
         }
         var versionByte = addressType.rawValue
         // make version byte use rules in convert address method
-        let sizeOffset = keyHash.count >= 40
+        let sizeOffset = lockingScriptPayload.count >= 40
         let divider = sizeOffset ? 8 : 4
-        let size = keyHash.count - (sizeOffset ? 20 : 0) - 20
+        let size = lockingScriptPayload.count - (sizeOffset ? 20 : 0) - 20
         if size % divider != 0 {
             throw BitcoinCoreErrors.AddressConversion.invalidAddressLength
         }
         versionByte = versionByte + (sizeOffset ? 1 : 0) << 2 + UInt8(size / divider)
-        let bech32 = CashAddrBech32.encode(Data([versionByte]) + keyHash, prefix: prefix)
-        return CashAddress(type: addressType, keyHash: keyHash, cashAddrBech32: bech32, version: versionByte)
+        let bech32 = CashAddrBech32.encode(Data([versionByte]) + lockingScriptPayload, prefix: prefix)
+        return CashAddress(type: addressType, payload: lockingScriptPayload, cashAddrBech32: bech32, version: versionByte)
     }
 
     public func convert(publicKey: PublicKey, type: ScriptType) throws -> Address {
-        return try convert(keyHash: publicKey.keyHash, type: type)
+        return try convert(lockingScriptPayload: publicKey.hashP2pkh, type: type)
     }
 
 }

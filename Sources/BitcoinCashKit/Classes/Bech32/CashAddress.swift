@@ -3,7 +3,7 @@ import BitcoinCore
 
 public class CashAddress: Address, Equatable {
     public let type: AddressType
-    public let keyHash: Data
+    public let lockingScriptPayload: Data
     public let stringValue: String
     public let version: UInt8
 
@@ -16,14 +16,14 @@ public class CashAddress: Address, Equatable {
 
     public var lockingScript: Data {
         switch type {
-        case .pubKeyHash: return OpCode.p2pkhStart + OpCode.push(keyHash) + OpCode.p2pkhFinish
-        case .scriptHash: return OpCode.p2shStart + OpCode.push(keyHash) + OpCode.p2shFinish
+        case .pubKeyHash: return OpCode.p2pkhStart + OpCode.push(lockingScriptPayload) + OpCode.p2pkhFinish
+        case .scriptHash: return OpCode.p2shStart + OpCode.push(lockingScriptPayload) + OpCode.p2shFinish
         }
     }
 
-    public init(type: AddressType, keyHash: Data, cashAddrBech32: String, version: UInt8) {
+    public init(type: AddressType, payload: Data, cashAddrBech32: String, version: UInt8) {
         self.type = type
-        self.keyHash = keyHash
+        self.lockingScriptPayload = payload
         self.stringValue = cashAddrBech32
         self.version = version
     }
@@ -32,7 +32,7 @@ public class CashAddress: Address, Equatable {
         guard let rhs = rhs as? CashAddress else {
             return false
         }
-        return lhs.type == rhs.type && lhs.keyHash == rhs.keyHash && lhs.version == rhs.version
+        return lhs.type == rhs.type && lhs.lockingScriptPayload == rhs.lockingScriptPayload && lhs.version == rhs.version
     }
 
 }
