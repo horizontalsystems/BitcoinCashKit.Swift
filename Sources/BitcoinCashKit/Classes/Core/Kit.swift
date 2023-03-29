@@ -115,6 +115,7 @@ public class Kit: AbstractKit {
                 .set(syncMode: syncMode)
                 .set(storage: storage)
                 .set(blockValidator: blockValidatorSet)
+                .set(purpose: .bip44)
                 .build()
 
         super.init(bitcoinCore: bitcoinCore, network: network)
