@@ -1,7 +1,7 @@
 import BitcoinCore
 import BigInt
 
-class ASERTValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
+public class ASERTValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
     private let anchorBlockHeight = 661647
     private let anchorParentBlockTime = 1605447844            // 2020 November 15, 14:13 GMT
     private let anchorBlockBits = 0x1804dafe
@@ -15,7 +15,7 @@ class ASERTValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
 
     private let difficultyEncoder: IDifficultyEncoder
 
-    init(encoder: IDifficultyEncoder) {
+    public init(encoder: IDifficultyEncoder) {
         difficultyEncoder = encoder
         maxTarget = difficultyEncoder.decodeCompact(bits: maxBits)
         anchorBlockTarget = difficultyEncoder.decodeCompact(bits: anchorBlockBits)
@@ -60,13 +60,13 @@ class ASERTValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
         return difficultyEncoder.encodeCompact(from: nextTarget)
     }
 
-    func validate(block: Block, previousBlock: Block) throws {
+    public func validate(block: Block, previousBlock: Block) throws {
         guard nextTarget(timestamp: previousBlock.timestamp, height: previousBlock.height) == block.bits else {
             throw BitcoinCoreErrors.BlockValidation.notEqualBits
         }
     }
 
-    func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
+    public func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
         previousBlock.height >= anchorBlockHeight
     }
 
