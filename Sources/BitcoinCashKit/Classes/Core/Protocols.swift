@@ -4,35 +4,35 @@ import BigInt
 
 // BitcoinCore Compatibility
 
-protocol IBitcoinCashDifficultyEncoder {
+public protocol IBitcoinCashDifficultyEncoder {
     func decodeCompact(bits: Int) -> BigInt
     func encodeCompact(from bigInt: BigInt) -> Int
 }
 
-protocol IBitcoinCashHasher {
+public protocol IBitcoinCashHasher {
     func hash(data: Data) -> Data
 }
 
-protocol IBitcoinCashBlockValidator {
+public protocol IBitcoinCashBlockValidator {
     func validate(block: Block, previousBlock: Block) throws
     func isBlockValidatable(block: Block, previousBlock: Block) -> Bool
 }
 
 // ###############################
 
-protocol IBitcoinCashBlockValidatorHelper {
+public protocol IBitcoinCashBlockValidatorHelper {
     func suitableBlockIndex(for blocks: [Block]) -> Int?
 
     func previous(for block: Block, count: Int) -> Block?
     func previousWindow(for block: Block, count: Int) -> [Block]?
 }
 
-protocol IBlockValidatorHelperWrapper {
+public protocol IBlockValidatorHelperWrapper {
     func previous(for block: Block, count: Int) -> Block?
     func previousWindow(for block: Block, count: Int) -> [Block]?
 }
 
-protocol IBitcoinCashBlockMedianTimeHelper {
+public protocol IBitcoinCashBlockMedianTimeHelper {
     var medianTimePast: Int? { get }
     func medianTimePast(block: Block) -> Int?
 }

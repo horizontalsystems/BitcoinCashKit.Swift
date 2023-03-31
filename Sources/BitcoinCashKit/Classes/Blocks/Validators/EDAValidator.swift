@@ -1,13 +1,13 @@
 import BitcoinCore
 import BigInt
 
-class EDAValidator {
+public class EDAValidator {
     private let difficultyEncoder: IBitcoinCashDifficultyEncoder
     private let blockHelper: IBitcoinCashBlockValidatorHelper
     private let blockMedianTimeHelper: IBitcoinCashBlockMedianTimeHelper
     private let maxTargetBits: Int
 
-    init(encoder: IBitcoinCashDifficultyEncoder, blockHelper: IBitcoinCashBlockValidatorHelper, blockMedianTimeHelper: IBitcoinCashBlockMedianTimeHelper, maxTargetBits: Int) {
+    public init(encoder: IBitcoinCashDifficultyEncoder, blockHelper: IBitcoinCashBlockValidatorHelper, blockMedianTimeHelper: IBitcoinCashBlockMedianTimeHelper, maxTargetBits: Int) {
         difficultyEncoder = encoder
         self.blockHelper = blockHelper
         self.blockMedianTimeHelper = blockMedianTimeHelper
@@ -23,7 +23,7 @@ class EDAValidator {
 
 extension EDAValidator: IBlockChainedValidator {
 
-    func validate(block: Block, previousBlock: Block) throws {
+    public func validate(block: Block, previousBlock: Block) throws {
         if previousBlock.bits == maxTargetBits {
             if block.bits != maxTargetBits {
                 throw BitcoinCoreErrors.BlockValidation.notEqualBits
@@ -50,7 +50,7 @@ extension EDAValidator: IBlockChainedValidator {
 
     }
 
-    func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
+    public func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
         true
     }
 

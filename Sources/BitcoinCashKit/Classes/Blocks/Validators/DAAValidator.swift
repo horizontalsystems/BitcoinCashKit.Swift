@@ -1,7 +1,7 @@
 import BitcoinCore
 import BigInt
 
-class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
+public class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
     private let largestHash = BigInt(1) << 256
     private let consensusDaaForkHeight = 504031                             // 2017 November 13, 14:06 GMT
 
@@ -10,7 +10,7 @@ class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
     private let targetSpacing: Int
     private let heightInterval: Int
 
-    init(encoder: IDifficultyEncoder, blockHelper: IBitcoinCashBlockValidatorHelper, targetSpacing: Int, heightInterval: Int) {
+    public init(encoder: IDifficultyEncoder, blockHelper: IBitcoinCashBlockValidatorHelper, targetSpacing: Int, heightInterval: Int) {
         difficultyEncoder = encoder
         self.blockHelper = blockHelper
 
@@ -18,7 +18,7 @@ class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
         self.heightInterval = heightInterval
     }
 
-    func validate(block: Block, previousBlock: Block) throws {
+    public func validate(block: Block, previousBlock: Block) throws {
         var blocks = blockHelper.previousWindow(for: previousBlock, count: 146) ?? [Block]()                                        // get all blocks without previousBlock needed for found suitable and range window
 
         guard !blocks.isEmpty else {
@@ -58,7 +58,7 @@ class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
         }
     }
 
-    func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
+    public func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
         previousBlock.height >= consensusDaaForkHeight // https://news.bitcoin.com/bitcoin-cash-network-completes-a-successful-hard-fork/
     }
 
