@@ -28,7 +28,6 @@
 		D36AAAA623A2125E0065B32B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D36AAA8F23A2125D0065B32B /* Assets.xcassets */; };
 		D36AAAA723A2125E0065B32B /* Configuration.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA9023A2125D0065B32B /* Configuration.swift */; };
 		D36AAAA823A2125E0065B32B /* Manager.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA9223A2125D0065B32B /* Manager.swift */; };
-		D36AAAA923A2125E0065B32B /* Signal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA9323A2125D0065B32B /* Signal.swift */; };
 		D36AAAAA23A2125E0065B32B /* TransactionRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = D36AAA9423A2125D0065B32B /* TransactionRecord.swift */; };
 		D36AAAAC23A212E30065B32B /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = D36AAAAB23A212E30065B32B /* LaunchScreen.xib */; };
 /* End PBXBuildFile section */
@@ -37,7 +36,6 @@
 		2FA5DACF4DE83AC5FE512D28 /* Extensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		607FACD41AFB9204008FA782 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		607FACD51AFB9204008FA782 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		6BC11A5E28EEC7EC0001FDF1 /* BitcoinCashKit Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = "BitcoinCashKit Demo.app"; path = "/Users/ant013/Ios/ HS_PODS/BitcoinCashKit.Swift/iOS Example/build/Debug-iphoneos/BitcoinCashKit Demo.app"; sourceTree = "<absolute>"; };
 		6BC11A6428EEEDF80001FDF1 /* BitcoinCashAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BitcoinCashAdapter.swift; sourceTree = "<group>"; };
 		D36AAA7F23A2125D0065B32B /* BaseAdapter.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseAdapter.swift; sourceTree = "<group>"; };
 		D36AAA8123A2125D0065B32B /* SendController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SendController.xib; sourceTree = "<group>"; };
@@ -56,9 +54,9 @@
 		D36AAA8F23A2125D0065B32B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D36AAA9023A2125D0065B32B /* Configuration.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Configuration.swift; sourceTree = "<group>"; };
 		D36AAA9223A2125D0065B32B /* Manager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Manager.swift; sourceTree = "<group>"; };
-		D36AAA9323A2125D0065B32B /* Signal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Signal.swift; sourceTree = "<group>"; };
 		D36AAA9423A2125D0065B32B /* TransactionRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TransactionRecord.swift; sourceTree = "<group>"; };
 		D36AAAAB23A212E30065B32B /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
+		D39033A029FA894B0096C220 /* BitcoinCashKit Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "BitcoinCashKit Demo.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -78,6 +76,7 @@
 			children = (
 				607FACD21AFB9204008FA782 /* Sources */,
 				6BC11A5F28EECBE90001FDF1 /* Frameworks */,
+				D39033A029FA894B0096C220 /* BitcoinCashKit Demo.app */,
 			);
 			sourceTree = "<group>";
 		};
@@ -152,7 +151,6 @@
 			isa = PBXGroup;
 			children = (
 				D36AAA9223A2125D0065B32B /* Manager.swift */,
-				D36AAA9323A2125D0065B32B /* Signal.swift */,
 				D36AAA9423A2125D0065B32B /* TransactionRecord.swift */,
 				2FA5DACF4DE83AC5FE512D28 /* Extensions.swift */,
 			);
@@ -179,7 +177,7 @@
 				6BC11A6228EEED560001FDF1 /* BitcoinCashKit */,
 			);
 			productName = BitcoinCashKit;
-			productReference = 6BC11A5E28EEC7EC0001FDF1 /* BitcoinCashKit Demo.app */;
+			productReference = D39033A029FA894B0096C220 /* BitcoinCashKit Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -248,7 +246,6 @@
 				D36AAAA723A2125E0065B32B /* Configuration.swift in Sources */,
 				D36AAAA023A2125E0065B32B /* WordsController.swift in Sources */,
 				D36AAAA823A2125E0065B32B /* Manager.swift in Sources */,
-				D36AAAA923A2125E0065B32B /* Signal.swift in Sources */,
 				D36AAA9C23A2125E0065B32B /* TransactionCell.swift in Sources */,
 				6BC11A6528EEEDF80001FDF1 /* BitcoinCashAdapter.swift in Sources */,
 				D36AAAA423A2125E0065B32B /* SendController.swift in Sources */,
