@@ -2,7 +2,6 @@ import Foundation
 import BitcoinCore
 import HdWalletKit
 import BigInt
-import RxSwift
 import HsToolKit
 
 public class Kit: AbstractKit {
