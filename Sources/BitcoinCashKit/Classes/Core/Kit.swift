@@ -55,28 +55,45 @@ public class Kit: AbstractKit {
 
     public init(extendedKey: HDExtendedKey, walletId: String, syncMode: BitcoinCore.SyncMode = .api, networkType: NetworkType = .mainNet(coinType: .type145), confirmationsThreshold: Int = 6, logger: Logger?) throws {
         let network: INetwork
-        let initialSyncApiUrl: String
-
         let validScheme: String
         switch networkType {
             case .mainNet(let coinType):
                 network = MainNet(coinType: coinType)
-                initialSyncApiUrl = "https://api.haskoin.com/bch/blockchain"
                 validScheme = "bitcoincash"
             case .testNet:
                 network = TestNet()
-                initialSyncApiUrl = "https://api.haskoin.com/bchtest/blockchain"
                 validScheme = "bchtest"
         }
 
         let logger = logger ?? Logger(minLogLevel: .verbose)
-
-        let initialSyncApi = BlockchainComApi(url: initialSyncApiUrl, hsUrl: "https://api.blocksdecoded.com/v1/blockchains/bitcoin-cash", logger: logger)
-
         let databaseFilePath = try DirectoryHelper.directoryURL(for: Kit.name).appendingPathComponent(Kit.databaseFileName(walletId: walletId, networkType: networkType, syncMode: syncMode)).path
         let storage = GrdbStorage(databaseFilePath: databaseFilePath)
-        let paymentAddressParser = PaymentAddressParser(validScheme: validScheme, removeScheme: false)
+        let checkpoint = Checkpoint.resolveCheckpoint(network: network, syncMode: syncMode, storage: storage)
+        let apiSyncStateManager = ApiSyncStateManager(storage: storage, restoreFromApi: network.syncableFromApi && syncMode != BitcoinCore.SyncMode.full)
 
+        let apiTransactionProvider: IApiTransactionProvider?
+        let hsBlockHashFetcher = HsBlockHashFetcher(hsUrl: "https://api.blocksdecoded.com/v1/blockchains/bitcoin-cash", logger: logger)
+
+        switch networkType {
+            case .mainNet:
+                let apiTransactionProviderUrl = "https://api.haskoin.com/bch/blockchain"
+                if case .blockchair(let key) = syncMode {
+                    let blockchairApi = BlockchairApi(secretKey: key, chainId: network.blockchairChainId, logger: logger)
+                    let blockchairBlockHashFetcher = BlockchairBlockHashFetcher(blockchairApi: blockchairApi)
+                    let blockHashFetcher = BlockHashFetcher(hsFetcher: hsBlockHashFetcher, blockchairFetcher: blockchairBlockHashFetcher, checkpointHeight: checkpoint.block.height)
+
+                    let blockchairProvider = BlockchairTransactionProvider(blockchairApi: blockchairApi, blockHashFetcher: blockHashFetcher)
+                    let blockchainComProvider = BlockchainComApi(url: apiTransactionProviderUrl, blockHashFetcher: hsBlockHashFetcher, logger: logger)
+
+                    apiTransactionProvider = BiApiBlockProvider(restoreProvider: blockchainComProvider, syncProvider: blockchairProvider, apiSyncStateManager: apiSyncStateManager)
+                } else {
+                    apiTransactionProvider = BlockchainComApi(url: apiTransactionProviderUrl, blockHashFetcher: hsBlockHashFetcher, logger: logger)
+                }
+            case .testNet:
+                apiTransactionProvider = BlockchainComApi(url: "https://api.haskoin.com/bchtest/blockchain", blockHashFetcher: hsBlockHashFetcher, logger: logger)
+        }
+
+        let paymentAddressParser = PaymentAddressParser(validScheme: validScheme, removeScheme: false)
         let difficultyEncoder = DifficultyEncoder()
 
         let blockValidatorSet = BlockValidatorSet()
@@ -105,7 +122,9 @@ public class Kit: AbstractKit {
 
         let bitcoinCore = try BitcoinCoreBuilder(logger: logger)
                 .set(network: network)
-                .set(initialSyncApi: initialSyncApi)
+                .set(apiTransactionProvider: apiTransactionProvider)
+                .set(checkpoint: checkpoint)
+                .set(apiSyncStateManager: apiSyncStateManager)
                 .set(extendedKey: extendedKey)
                 .set(paymentAddressParser: paymentAddressParser)
                 .set(walletId: walletId)
@@ -121,10 +140,17 @@ public class Kit: AbstractKit {
 
         // extending BitcoinCore
         let bech32 = CashBech32AddressConverter(prefix: network.bech32PrefixPattern)
-        let base58 = Base58AddressConverter(addressVersion: network.pubKeyHash, addressScriptVersion: network.scriptHash)
         bitcoinCore.prepend(addressConverter: bech32)
 
-        bitcoinCore.add(restoreKeyConverter: Bip44RestoreKeyConverter(addressConverter: base58))
+        let restoreKeyConverter: IRestoreKeyConverter
+        if case .blockchair = syncMode {
+            restoreKeyConverter = BlockchairCashRestoreKeyConverter(addressConverter: bech32, prefix: network.bech32PrefixPattern)
+        } else {
+            let base58 = Base58AddressConverter(addressVersion: network.pubKeyHash, addressScriptVersion: network.scriptHash)
+            restoreKeyConverter = Bip44RestoreKeyConverter(addressConverter: base58)
+        }
+
+        bitcoinCore.add(restoreKeyConverter: restoreKeyConverter)
     }
 
 }
