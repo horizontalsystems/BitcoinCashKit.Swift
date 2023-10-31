@@ -15,6 +15,7 @@ class TestNet: INetwork {
     let coinType: UInt32 = 1
     let sigHash: SigHashType = .bitcoinCashAll
     var syncableFromApi: Bool = true
+    var blockchairChainId: String = ""
 
     let dnsSeeds = [
         "testnet-seed.bitcoinabc.org",
