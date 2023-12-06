@@ -1,5 +1,5 @@
-import Foundation
 import BitcoinCore
+import Foundation
 
 public class ForkValidator: IBlockChainedValidator {
     private let concreteValidator: IBitcoinCashBlockValidator
@@ -20,8 +20,7 @@ public class ForkValidator: IBlockChainedValidator {
         try concreteValidator.validate(block: block, previousBlock: previousBlock)
     }
 
-    public func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
+    public func isBlockValidatable(block: Block, previousBlock _: Block) -> Bool {
         block.height == forkHeight
     }
-
 }
