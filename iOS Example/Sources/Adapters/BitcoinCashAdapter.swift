@@ -1,7 +1,7 @@
 import BitcoinCashKit
 import BitcoinCore
-import HsToolKit
 import HdWalletKit
+import HsToolKit
 
 class BitcoinCashAdapter: BaseAdapter {
     let bitcoinCashKit: Kit
@@ -23,25 +23,23 @@ class BitcoinCashAdapter: BaseAdapter {
 }
 
 extension BitcoinCashAdapter: BitcoinCoreDelegate {
-
-    func transactionsUpdated(inserted: [TransactionInfo], updated: [TransactionInfo]) {
+    func transactionsUpdated(inserted _: [TransactionInfo], updated _: [TransactionInfo]) {
         transactionsSubject.send()
     }
 
-    func transactionsDeleted(hashes: [String]) {
+    func transactionsDeleted(hashes _: [String]) {
         transactionsSubject.send()
     }
 
-    func balanceUpdated(balance: BalanceInfo) {
+    func balanceUpdated(balance _: BalanceInfo) {
         balanceSubject.send()
     }
 
-    func lastBlockInfoUpdated(lastBlockInfo: BlockInfo) {
+    func lastBlockInfoUpdated(lastBlockInfo _: BlockInfo) {
         lastBlockSubject.send()
     }
 
-    public func kitStateUpdated(state: BitcoinCore.KitState) {
+    public func kitStateUpdated(state _: BitcoinCore.KitState) {
         syncStateSubject.send()
     }
-
 }

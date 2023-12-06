@@ -7,7 +7,7 @@ public class BitcoinCashBlockValidatorHelper: IBitcoinCashBlockValidatorHelper {
         self.coreBlockValidatorHelper = coreBlockValidatorHelper
     }
 
-    public func suitableBlockIndex(for blocks: [Block]) -> Int? {         // works just for 3 blocks
+    public func suitableBlockIndex(for blocks: [Block]) -> Int? { // works just for 3 blocks
         guard blocks.count == 3 else {
             return nil
         }
@@ -23,5 +23,4 @@ public class BitcoinCashBlockValidatorHelper: IBitcoinCashBlockValidatorHelper {
     public func previousWindow(for block: Block, count: Int) -> [Block]? {
         coreBlockValidatorHelper.previousWindow(for: block, count: count)
     }
-
 }

@@ -10,7 +10,8 @@ let package = Package(
     products: [
         .library(
             name: "BitcoinCashKit",
-            targets: ["BitcoinCashKit"]),
+            targets: ["BitcoinCashKit"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/horizontalsystems/BitcoinCore.Swift.git", .upToNextMajor(from: "2.2.0")),

@@ -1,5 +1,5 @@
-import Foundation
 import BitcoinCore
+import Foundation
 
 public class CashAddress: Address, Equatable {
     public let type: AddressType
@@ -23,16 +23,15 @@ public class CashAddress: Address, Equatable {
 
     public init(type: AddressType, payload: Data, cashAddrBech32: String, version: UInt8) {
         self.type = type
-        self.lockingScriptPayload = payload
-        self.stringValue = cashAddrBech32
+        lockingScriptPayload = payload
+        stringValue = cashAddrBech32
         self.version = version
     }
 
-    static public func ==<T: Address>(lhs: CashAddress, rhs: T) -> Bool {
+    public static func == (lhs: CashAddress, rhs: some Address) -> Bool {
         guard let rhs = rhs as? CashAddress else {
             return false
         }
         return lhs.type == rhs.type && lhs.lockingScriptPayload == rhs.lockingScriptPayload && lhs.version == rhs.version
     }
-
 }

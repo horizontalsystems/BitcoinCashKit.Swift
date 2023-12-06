@@ -1,6 +1,6 @@
-import Foundation
-import BitcoinCore
 import BigInt
+import BitcoinCore
+import Foundation
 
 // BitcoinCore Compatibility
 

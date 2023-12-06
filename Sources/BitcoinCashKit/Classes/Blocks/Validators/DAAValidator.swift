@@ -1,9 +1,9 @@
-import BitcoinCore
 import BigInt
+import BitcoinCore
 
 public class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
     private let largestHash = BigInt(1) << 256
-    private let consensusDaaForkHeight = 504031                             // 2017 November 13, 14:06 GMT
+    private let consensusDaaForkHeight = 504_031 // 2017 November 13, 14:06 GMT
 
     private let difficultyEncoder: IDifficultyEncoder
     private let blockHelper: IBitcoinCashBlockValidatorHelper
@@ -19,16 +19,16 @@ public class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
     }
 
     public func validate(block: Block, previousBlock: Block) throws {
-        var blocks = blockHelper.previousWindow(for: previousBlock, count: 146) ?? [Block]()                                        // get all blocks without previousBlock needed for found suitable and range window
+        var blocks = blockHelper.previousWindow(for: previousBlock, count: 146) ?? [Block]() // get all blocks without previousBlock needed for found suitable and range window
 
         guard !blocks.isEmpty else {
             throw BitcoinCoreErrors.BlockValidation.noPreviousBlock
         }
-        blocks.append(previousBlock)                                                                                                // add previous block to have all 147
+        blocks.append(previousBlock) // add previous block to have all 147
 
-        guard let newLastBlockShift = blockHelper.suitableBlockIndex(for: Array(blocks.suffix(from: blocks.count - 3))),            // get suitable index for last 3 blocks
-              let newFirstBlockShift = blockHelper.suitableBlockIndex(for: Array(blocks.prefix(3))) else {                          // get suitable index for first 3 blocks
-
+        guard let newLastBlockShift = blockHelper.suitableBlockIndex(for: Array(blocks.suffix(from: blocks.count - 3))), // get suitable index for last 3 blocks
+              let newFirstBlockShift = blockHelper.suitableBlockIndex(for: Array(blocks.prefix(3)))
+        else { // get suitable index for first 3 blocks
             throw BitcoinCoreErrors.BlockValidation.noPreviousBlock
         }
 
@@ -43,7 +43,7 @@ public class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
         }
 
         var chainWork = BigInt(0)
-        for i in startIndex...finishIndex {
+        for i in startIndex ... finishIndex {
             let target = difficultyEncoder.decodeCompact(bits: blocks[i].bits)
             chainWork += largestHash / (target + 1)
         }
@@ -58,8 +58,7 @@ public class DAAValidator: IBlockChainedValidator, IBitcoinCashBlockValidator {
         }
     }
 
-    public func isBlockValidatable(block: Block, previousBlock: Block) -> Bool {
+    public func isBlockValidatable(block _: Block, previousBlock: Block) -> Bool {
         previousBlock.height >= consensusDaaForkHeight // https://news.bitcoin.com/bitcoin-cash-network-completes-a-successful-hard-fork/
     }
-
 }

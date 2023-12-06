@@ -1,16 +1,16 @@
+import BitcoinCore
 import Combine
 import UIKit
-import BitcoinCore
 
 class SendController: UIViewController {
     private var cancellables = Set<AnyCancellable>()
 
-    @IBOutlet weak var addressTextField: UITextField?
-    @IBOutlet weak var amountTextField: UITextField?
-    @IBOutlet weak var coinLabel: UILabel?
-    @IBOutlet weak var feeLabel: UILabel?
-    @IBOutlet weak var timeLockSwitch: UISwitch?
-    @IBOutlet weak var picker: UIPickerView?
+    @IBOutlet var addressTextField: UITextField?
+    @IBOutlet var amountTextField: UITextField?
+    @IBOutlet var coinLabel: UILabel?
+    @IBOutlet var feeLabel: UILabel?
+    @IBOutlet var timeLockSwitch: UISwitch?
+    @IBOutlet var picker: UIPickerView?
 
     private var adapters = [BaseAdapter]()
     private let segmentedControl = UISegmentedControl()
@@ -22,11 +22,11 @@ class SendController: UIViewController {
         segmentedControl.addTarget(self, action: #selector(onSegmentChanged), for: .valueChanged)
 
         Manager.shared.adapterSubject
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] in
-                    self?.updateAdapters()
-                }
-                .store(in: &cancellables)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] in
+                self?.updateAdapters()
+            }
+            .store(in: &cancellables)
 
         updateAdapters()
     }
@@ -45,23 +45,22 @@ class SendController: UIViewController {
         segmentedControl.selectedSegmentIndex = 0
         segmentedControl.sendActions(for: .valueChanged)
     }
-    
+
     private func updateFee() {
         var address: String? = nil
-        
+
         if let addressStr = addressTextField?.text {
             do {
                 try currentAdapter?.validate(address: addressStr)
                 address = addressStr
-            } catch {
-            }
+            } catch {}
         }
 
         guard let amountString = amountTextField?.text, let amount = Decimal(string: amountString) else {
             feeLabel?.text = "Fee: "
             return
         }
-        
+
         if let fee = currentAdapter?.fee(for: amount, address: address, pluginData: [:]) {
             feeLabel?.text = "Fee: \(fee.formattedAmount)"
         }
@@ -78,15 +77,15 @@ class SendController: UIViewController {
         updateFee()
     }
 
-    @IBAction func onAddressEditEnded(_ sender: Any) {
+    @IBAction func onAddressEditEnded(_: Any) {
         updateFee()
     }
 
-    @IBAction func onAmountEditEnded(_ sender: Any) {
+    @IBAction func onAmountEditEnded(_: Any) {
         updateFee()
     }
 
-    @IBAction func onTimeLockSwitchToggle(_ sender: Any) {
+    @IBAction func onTimeLockSwitchToggle(_: Any) {
         timeLockEnabled = !timeLockEnabled
         updateFee()
     }
@@ -98,10 +97,9 @@ class SendController: UIViewController {
             do {
                 try currentAdapter?.validate(address: addressStr)
                 address = addressStr
-            } catch {
-            }
+            } catch {}
         }
-        
+
         if let maxAmount = currentAdapter?.availableBalance(for: address, pluginData: [:]) {
             amountTextField?.text = "\(maxAmount)"
             onAmountEditEnded(0)
@@ -115,8 +113,7 @@ class SendController: UIViewController {
             do {
                 try currentAdapter?.validate(address: addressStr)
                 address = addressStr
-            } catch {
-            }
+            } catch {}
         }
 
         if let minAmount = currentAdapter?.minSpendableAmount(for: address) {
@@ -173,5 +170,4 @@ class SendController: UIViewController {
 
         return adapters[segmentedControl.selectedSegmentIndex]
     }
-
 }

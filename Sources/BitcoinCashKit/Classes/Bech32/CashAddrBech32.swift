@@ -2,7 +2,7 @@ import Foundation
 import HsCryptoKit
 import HsExtensions
 
-class CashAddrBech32 {
+enum CashAddrBech32 {
     private static let base32Alphabets = "qpzry9x8gf2tvdw0s3jn54khce6mua7l"
 
     public static func encode(_ bytes: Data, prefix: String) -> String {
@@ -21,7 +21,7 @@ class CashAddrBech32 {
     public static func decode(_ string: String) -> (prefix: String, data: Data)? {
         // We can't have empty string.
         // Bech32 should be uppercase only / lowercase only.
-        guard !string.isEmpty && [string.lowercased(), string.uppercased()].contains(string) else {
+        guard !string.isEmpty, [string.lowercased(), string.uppercased()].contains(string) else {
             return nil
         }
 
@@ -32,7 +32,7 @@ class CashAddrBech32 {
         }
         let (prefix, base32) = (components[0], components[1])
 
-        var decodedIn5bit: [UInt8] = [UInt8]()
+        var decodedIn5bit = [UInt8]()
         for c in base32.lowercased() {
             // We can't have characters other than base32 alphabets.
             guard let baseIndex = base32Alphabets.firstIndex(of: c)?.utf16Offset(in: base32Alphabets) else {
@@ -55,14 +55,14 @@ class CashAddrBech32 {
     }
 
     private static func verifyChecksum(prefix: String, payload: Data) -> Bool {
-        return PolyMod(expand(prefix) + payload) == 0
+        PolyMod(expand(prefix) + payload) == 0
     }
 
     private static func expand(_ prefix: String) -> Data {
-        var ret: Data = Data()
+        var ret = Data()
         let buf: [UInt8] = Array(prefix.utf8)
         for b in buf {
-            ret += b & 0x1f
+            ret += b & 0x1F
         }
         ret += Data(repeating: 0, count: 1)
         return ret
@@ -71,9 +71,9 @@ class CashAddrBech32 {
     private static func createChecksum(prefix: String, payload: Data) -> Data {
         let enc: Data = expand(prefix) + payload + Data(repeating: 0, count: 8)
         let mod: UInt64 = PolyMod(enc)
-        var ret: Data = Data()
-        for i in 0..<8 {
-            ret += UInt8((mod >> (5 * (7 - i))) & 0x1f)
+        var ret = Data()
+        for i in 0 ..< 8 {
+            ret += UInt8((mod >> (5 * (7 - i))) & 0x1F)
         }
         return ret
     }
@@ -81,13 +81,13 @@ class CashAddrBech32 {
     private static func PolyMod(_ data: Data) -> UInt64 {
         var c: UInt64 = 1
         for d in data {
-            let c0: UInt8 = UInt8(c >> 35)
-            c = ((c & 0x07ffffffff) << 5) ^ UInt64(d)
-            if c0 & 0x01 != 0 { c ^= 0x98f2bc8e61 }
-            if c0 & 0x02 != 0 { c ^= 0x79b76d99e2 }
-            if c0 & 0x04 != 0 { c ^= 0xf33e5fb3c4 }
-            if c0 & 0x08 != 0 { c ^= 0xae2eabe2a8 }
-            if c0 & 0x10 != 0 { c ^= 0x1e4f43e470 }
+            let c0 = UInt8(c >> 35)
+            c = ((c & 0x07_FFFF_FFFF) << 5) ^ UInt64(d)
+            if c0 & 0x01 != 0 { c ^= 0x98_F2BC_8E61 }
+            if c0 & 0x02 != 0 { c ^= 0x79_B76D_99E2 }
+            if c0 & 0x04 != 0 { c ^= 0xF3_3E5F_B3C4 }
+            if c0 & 0x08 != 0 { c ^= 0xAE_2EAB_E2A8 }
+            if c0 & 0x10 != 0 { c ^= 0x1E_4F43_E470 }
         }
         return c ^ 1
     }
@@ -95,7 +95,7 @@ class CashAddrBech32 {
     private static func convertTo5bit(data: Data, pad: Bool) -> Data {
         var acc = Int()
         var bits = UInt8()
-        let maxv: Int = 31 // 31 = 0x1f = 00011111
+        let maxv = 31 // 31 = 0x1f = 00011111
         var converted: [UInt8] = []
         for d in data {
             acc = (acc << 8) | Int(d)
@@ -107,17 +107,17 @@ class CashAddrBech32 {
             }
         }
 
-        let lastBits: UInt8 = UInt8(acc << (5 - bits) & maxv)
-        if pad && bits > 0 {
+        let lastBits = UInt8(acc << (5 - bits) & maxv)
+        if pad, bits > 0 {
             converted.append(lastBits)
         }
         return Data(converted)
     }
 
-    internal static func convertFrom5bit(data: Data) throws -> Data {
+    static func convertFrom5bit(data: Data) throws -> Data {
         var acc = Int()
         var bits = UInt8()
-        let maxv: Int = 255 // 255 = 0xff = 11111111
+        let maxv = 255 // 255 = 0xff = 11111111
         var converted: [UInt8] = []
         for d in data {
             guard (d >> 5) == 0 else {
@@ -132,8 +132,8 @@ class CashAddrBech32 {
             }
         }
 
-        let lastBits: UInt8 = UInt8(acc << (8 - bits) & maxv)
-        guard bits < 5 && lastBits == 0  else {
+        let lastBits = UInt8(acc << (8 - bits) & maxv)
+        guard bits < 5, lastBits == 0 else {
             throw DecodeError.invalidBits
         }
 
@@ -144,5 +144,4 @@ class CashAddrBech32 {
         case invalidCharacter
         case invalidBits
     }
-
 }
