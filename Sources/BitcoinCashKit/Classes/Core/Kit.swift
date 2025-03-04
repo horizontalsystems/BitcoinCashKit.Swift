@@ -68,22 +68,19 @@ public class Kit: AbstractKit {
         let apiSyncStateManager = ApiSyncStateManager(storage: storage, restoreFromApi: network.syncableFromApi && syncMode != BitcoinCore.SyncMode.full)
 
         let apiTransactionProvider: IApiTransactionProvider?
-        let hsBlockHashFetcher = HsBlockHashFetcher(hsUrl: "https://api.blocksdecoded.com/v1/blockchains/bitcoin-cash", logger: logger)
+        let blockchairApi = BlockchairApi(chainId: network.blockchairChainId, logger: logger)
+        let blockchairBlockHashFetcher = BlockchairBlockHashFetcher(blockchairApi: blockchairApi)
 
         switch networkType {
         case .mainNet:
             let apiTransactionProviderUrl = "https://api.haskoin.com/bch/blockchain"
             if case .blockchair = syncMode {
-                let blockchairApi = BlockchairApi(chainId: network.blockchairChainId, logger: logger)
-                let blockchairBlockHashFetcher = BlockchairBlockHashFetcher(blockchairApi: blockchairApi)
-                let blockHashFetcher = BlockHashFetcher(hsFetcher: hsBlockHashFetcher, blockchairFetcher: blockchairBlockHashFetcher, checkpointHeight: checkpoint.block.height)
-
-                apiTransactionProvider = BlockchairTransactionProvider(blockchairApi: blockchairApi, blockHashFetcher: blockHashFetcher)
+                apiTransactionProvider = BlockchairTransactionProvider(blockchairApi: blockchairApi, blockHashFetcher: blockchairBlockHashFetcher)
             } else {
-                apiTransactionProvider = BlockchainComApi(url: apiTransactionProviderUrl, blockHashFetcher: hsBlockHashFetcher, logger: logger)
+                apiTransactionProvider = BlockchainComApi(url: apiTransactionProviderUrl, blockHashFetcher: blockchairBlockHashFetcher, logger: logger)
             }
         case .testNet:
-            apiTransactionProvider = BlockchainComApi(url: "https://api.haskoin.com/bchtest/blockchain", blockHashFetcher: hsBlockHashFetcher, logger: logger)
+            apiTransactionProvider = BlockchainComApi(url: "https://api.haskoin.com/bchtest/blockchain", blockHashFetcher: blockchairBlockHashFetcher, logger: logger)
         }
 
         let paymentAddressParser = PaymentAddressParser(validScheme: validScheme, removeScheme: false)
